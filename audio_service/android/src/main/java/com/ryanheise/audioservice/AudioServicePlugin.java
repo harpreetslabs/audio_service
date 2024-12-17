@@ -59,6 +59,10 @@ import android.util.Log;
  * AudioservicePlugin
  */
 public class AudioServicePlugin implements FlutterPlugin, ActivityAware {
+   private static boolean armStartup = false;
+    public static synchronized void setArmStartup(boolean enabled) {
+        armStartup = enabled;
+    }
     private static String flutterEngineId = "audio_service_engine";
     /** Must be called BEFORE any FlutterEngine is created. e.g. in Application class. */
     public static void setFlutterEngineId(String id) {
@@ -68,6 +72,9 @@ public class AudioServicePlugin implements FlutterPlugin, ActivityAware {
         return flutterEngineId;
     }
     public static synchronized FlutterEngine getFlutterEngine(Context context) {
+         if (armStartup == false) {
+            return null;
+        }
         FlutterEngine flutterEngine = FlutterEngineCache.getInstance().get(flutterEngineId);
         if (flutterEngine == null) {
             // XXX: The constructor triggers onAttachedToEngine so this variable doesn't help us.
